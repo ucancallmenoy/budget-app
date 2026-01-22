@@ -5,11 +5,11 @@ from pathlib import Path
 class Config:
     """Base configuration."""
     BASE_DIR = Path(__file__).parent.parent
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Database configuration
-    DATABASE_NAME = os.environ.get('DATABASE_NAME') or 'budget.db'
+    DATABASE_NAME = os.environ.get('DATABASE_NAME')
     INSTANCE_PATH = BASE_DIR / 'instance'
     DATABASE_PATH = INSTANCE_PATH / DATABASE_NAME
     
