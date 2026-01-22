@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Budget App{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">All Transactions</h1>
+    <p class="page-subtitle">View and manage your transactions</p>
+</div>
+
+<div class="section-card">
+    <div class="filter-section">
+        <h3><i class="fas fa-filter"></i> Filter Transactions</h3>
+        <form method="GET" action="{{ url_for('transactions.list_transactions') }}" class="filter-form">
+            <div class="form-row">
+                <div class="form-group">
+                    {{ filter_form.category.label }}
+                    {{ filter_form.category(class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    {{ filter_form.start_date.label }}
+                    {{ filter_form.start_date(class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    {{ filter_form.end_date.label }}
+                    {{ filter_form.end_date(class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Apply Filter</button>
+                    <a href="{{ url_for('transactions.list_transactions') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if transactions %}
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>
+                            <span class="badge badge-{{ transaction.transaction_type }}">
+                                {% if transaction.transaction_type == 'income' %}
+                                    <i class="fas fa-plus"></i>
+                                {% else %}
+                                    <i class="fas fa-minus"></i>
+                                {% endif %}
+                                {{ transaction.transaction_type|capitalize }}
+                            </span>
+                        </td>
+                        <td class="amount-{{ transaction.transaction_type }}">
+                            ${{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                        <td class="actions">
+                            <a href="{{ url_for('transactions.edit_transaction', transaction_id=transaction.id) }}" 
+                               class="btn btn-sm btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                            <form method="POST" 
+                                  action="{{ url_for('transactions.delete_transaction', transaction_id=transaction.id) }}" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+                                <button type="submit" class="btn btn-sm btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ url_for('transactions.list_transactions', page=page-1, category=category, start_date=start_date, end_date=end_date) }}" 
+                       class="btn btn-secondary btn-sm"><i class="fas fa-chevron-left"></i> Previous</a>
+                {% endif %}
+
+                <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+                {% if page < total_pages %}
+                    <a href="{{ url_for('transactions.list_transactions', page=page+1, category=category, start_date=start_date, end_date=end_date) }}" 
+                       class="btn btn-secondary btn-sm">Next <i class="fas fa-chevron-right"></i></a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-data">
+            <p>No transactions found. <a href="{{ url_for('transactions.add_transaction') }}">Add a transaction</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

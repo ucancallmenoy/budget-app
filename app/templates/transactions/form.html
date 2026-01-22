@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Transaction - Budget App{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ action }} Transaction</h1>
+    <p class="page-subtitle">Fill in the transaction details below</p>
+</div>
+
+<div class="section-card">
+    <div class="form-container">
+        <form method="POST" class="transaction-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="form-control", placeholder="e.g., Grocery shopping") }}
+                {% if form.description.errors %}
+                    <div class="error">
+                        {% for error in form.description.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.amount.label }}
+                    {{ form.amount(class="form-control", placeholder="0.00") }}
+                    {% if form.amount.errors %}
+                        <div class="error">
+                            {% for error in form.amount.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.transaction_type.label }}
+                    {{ form.transaction_type(class="form-control") }}
+                    {% if form.transaction_type.errors %}
+                        <div class="error">
+                            {% for error in form.transaction_type.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.category.label }}
+                    {{ form.category(class="form-control") }}
+                    {% if form.category.errors %}
+                        <div class="error">
+                            {% for error in form.category.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.date.label }}
+                    {{ form.date(class="form-control") }}
+                    {% if form.date.errors %}
+                        <div class="error">
+                            {% for error in form.date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('transactions.list_transactions') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

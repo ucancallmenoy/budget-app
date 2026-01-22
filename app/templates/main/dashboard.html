@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Budget App{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Overview of your financial activity</p>
+</div>
+
+<div class="summary-cards">
+    <div class="card card-income">
+        <div class="card-header">
+            <h3 class="card-title">Total Income</h3>
+            <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+        </div>
+        <p class="card-amount">${{ "%.2f"|format(summary.total_income) }}</p>
+    </div>
+    
+    <div class="card card-expense">
+        <div class="card-header">
+            <h3 class="card-title">Total Expenses</h3>
+            <div class="card-icon"><i class="fas fa-arrow-down"></i></div>
+        </div>
+        <p class="card-amount">${{ "%.2f"|format(summary.total_expense) }}</p>
+    </div>
+    
+    <div class="card card-balance {% if summary.balance >= 0 %}positive{% else %}negative{% endif %}">
+        <div class="card-header">
+            <h3 class="card-title">Current Balance</h3>
+            <div class="card-icon"><i class="fas fa-piggy-bank"></i></div>
+        </div>
+        <p class="card-amount">${{ "%.2f"|format(summary.balance) }}</p>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <h2 class="section-title">Recent Transactions</h2>
+        {% if recent_transactions %}
+        <a href="{{ url_for('transactions.list_transactions') }}" class="btn btn-secondary btn-sm">View All</a>
+        {% endif %}
+    </div>
+
+    {% if recent_transactions %}
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in recent_transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>
+                            <span class="badge badge-{{ transaction.transaction_type }}">
+                                {% if transaction.transaction_type == 'income' %}
+                                    <i class="fas fa-plus"></i>
+                                {% else %}
+                                    <i class="fas fa-minus"></i>
+                                {% endif %}
+                                {{ transaction.transaction_type|capitalize }}
+                            </span>
+                        </td>
+                        <td class="amount-{{ transaction.transaction_type }}">
+                            ${{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-data">
+            <p>No transactions yet. <a href="{{ url_for('transactions.add_transaction') }}">Add your first transaction</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
